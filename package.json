@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "jest",
     "screenshot": "node scripts/screenshot.js",
-    "watch:screenshots": "chokidar \"src/**/*\" \"app/views/**/*\" -c \"npm run build && npm run screenshot\""
+    "watch:screenshots": "chokidar \"src/**/*\" \"app/views/**/*\" -c \"npm run build && npm run screenshot\"",
+    "oauth:test": "node scripts/oauth-login.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
