@@ -20,3 +20,27 @@ This folder contains two tracks of project documentation:
 - Requirements IDs: R-###
 - Test IDs: T-###
 - Update the traceability matrix when adding/changing requirements or tests.
+
+## End-to-end tests (Playwright + Allure)
+
+- Install browsers (first run):
+  - `npx playwright install --with-deps`
+- Run Playwright tests:
+  - `npm run test:pw`
+- Open Playwright HTML report (after a run):
+  - `npm run report`
+- Generate Allure report (HTML) from results:
+  - `npm run allure:generate`
+- Open Allure report locally:
+  - `npm run allure:open`
+
+Configuration:
+- Base URL is configurable via environment variables (checked in order):
+  - `PLAYWRIGHT_BASE_URL`
+  - `BASE_URL`
+  - defaults to `http://localhost:11000`
+  Example: `PLAYWRIGHT_BASE_URL=https://staging.example.com npm run test:pw`
+
+Outputs:
+- Playwright HTML: `playwright-report/`
+- Allure results: `test-reports/allure-results/` → HTML: `test-reports/allure-report/`

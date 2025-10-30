@@ -66,7 +66,9 @@ public class AuthController extends Controller {
                 try {
                     for (String line : Files.readAllLines(pth)) {
                         String trimmed = line.trim();
-                        if (trimmed.isEmpty() || trimmed.startsWith("#")) continue;
+                        if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                            continue;
+                        }
                         int eq = trimmed.indexOf('=');
                         if (eq > 0) {
                             String k = trimmed.substring(0, eq).trim();
@@ -74,10 +76,16 @@ public class AuthController extends Controller {
                             p.setProperty(k, v);
                         }
                     }
-                    if (clientId == null) clientId = p.getProperty("OIDC_CLIENT_ID");
-                    if (clientSecret == null) clientSecret = p.getProperty("OIDC_CLIENT_SECRET");
+                    if (clientId == null) {
+                        clientId = p.getProperty("OIDC_CLIENT_ID");
+                    }
+                    if (clientSecret == null) {
+                        clientSecret = p.getProperty("OIDC_CLIENT_SECRET");
+                    }
                     String fileRedirect = p.getProperty("OIDC_REDIRECT_URI");
-                    if (fileRedirect != null && !fileRedirect.isBlank()) redirectUri = fileRedirect;
+                    if (fileRedirect != null && !fileRedirect.isBlank()) {
+                        redirectUri = fileRedirect;
+                    }
                 } catch (IOException ignored) {}
             }
         }
@@ -96,7 +104,9 @@ public class AuthController extends Controller {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest req = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(10)).GET().build();
         HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
-        if (res.statusCode() != 200) throw new IOException("OIDC discovery failed: " + res.statusCode());
+        if (res.statusCode() != 200) {
+            throw new IOException("OIDC discovery failed: " + res.statusCode());
+        }
         JsonNode node = mapper.readTree(res.body());
         return new ProviderMeta(node.get("authorization_endpoint").asText(), node.get("token_endpoint").asText(), node.path("userinfo_endpoint").asText(null));
     }
@@ -128,7 +138,7 @@ public class AuthController extends Controller {
         if (config.clientId == null || config.clientSecret == null) {
             return internalServerError("OIDC client not configured");
         }
-        String expectedState = request.session().getOptional("oauth.state").orElse(null);
+        String expectedState = request.session().get("oauth.state").orElse(null);
         if (expectedState == null || !expectedState.equals(state)) {
             return unauthorized("Invalid state");
         }
@@ -165,17 +175,25 @@ public class AuthController extends Controller {
                         HttpResponse<String> resInfo = client2.send(reqInfo, HttpResponse.BodyHandlers.ofString());
                         if (resInfo.statusCode() == 200) {
                             JsonNode info = mapper.readTree(resInfo.body());
-                            if (info.hasNonNull("email")) email = info.get("email").asText();
-                            else if (info.hasNonNull("preferred_username")) email = info.get("preferred_username").asText();
-                            else if (info.hasNonNull("sub")) email = info.get("sub").asText();
+                            if (info.hasNonNull("email")) {
+                                email = info.get("email").asText();
+                            } else if (info.hasNonNull("preferred_username")) {
+                                email = info.get("preferred_username").asText();
+                            } else if (info.hasNonNull("sub")) {
+                                email = info.get("sub").asText();
+                            }
                         }
                     }
                 } catch (Exception ignored) {}
             }
             Map<String, String> sess = new HashMap<>();
             sess.put("auth.loggedIn", "true");
-            if (email != null) sess.put("auth.email", email);
-            if (accessToken != null) sess.put("auth.access", accessToken);
+            if (email != null) {
+                sess.put("auth.email", email);
+            }
+            if (accessToken != null) {
+                sess.put("auth.access", accessToken);
+            }
             return redirect("/").addingToSession(request, sess);
         } catch (Exception e) {
             return internalServerError("Callback error: " + e.getMessage());
@@ -187,18 +205,20 @@ public class AuthController extends Controller {
     }
 
     public Result me(Http.Request request) {
-        boolean logged = request.session().getOptional("auth.loggedIn").orElse("false").equals("true");
+        boolean logged = request.session().get("auth.loggedIn").orElse("false").equals("true");
         Map<String, Object> info = new HashMap<>();
         info.put("loggedIn", logged);
-        info.put("email", request.session().getOptional("auth.email").orElse(null));
+        info.put("email", request.session().get("auth.email").orElse(null));
         // Expose the access token for client-side JWT claim display (dev convenience)
-        info.put("token", request.session().getOptional("auth.access").orElse(null));
+        info.put("token", request.session().get("auth.access").orElse(null));
         return ok(Json.toJson(info));
     }
 
     public Result secure(Http.Request request) {
-        boolean logged = request.session().getOptional("auth.loggedIn").orElse("false").equals("true");
-        if (!logged) return unauthorized("Not authenticated");
+        boolean logged = request.session().get("auth.loggedIn").orElse("false").equals("true");
+        if (!logged) {
+            return unauthorized("Not authenticated");
+        }
         return ok("secret ok");
     }
 }
