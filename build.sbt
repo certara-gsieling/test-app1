@@ -10,3 +10,10 @@ scalaVersion := "2.13.17"
 libraryDependencies += guice
 
 Compile / javacOptions ++= Seq("--release", "21")
+
+// Show detailed Java deprecation warnings during compile
+Compile / javacOptions ++= Seq("-Xlint:deprecation")
+
+libraryDependencies ++= Seq(
+  "com.nimbusds" % "oauth2-oidc-sdk" % "11.10"
+)

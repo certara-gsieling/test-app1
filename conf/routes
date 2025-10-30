@@ -10,3 +10,10 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # Health check endpoint
 GET     /health                     controllers.HealthController.health()
+
+# OAuth/OIDC endpoints
+GET     /auth/login                 controllers.AuthController.login(request: Request)
+GET     /oauth/complete             controllers.AuthController.callback(code: String, state: String, request: Request)
+POST    /auth/logout                controllers.AuthController.logout(request: Request)
+GET     /api/me                     controllers.AuthController.me(request: Request)
+GET     /api/secure                 controllers.AuthController.secure(request: Request)

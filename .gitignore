@@ -21,3 +21,12 @@ node_modules/
 coverage/
 .vite/
 .eslintcache
+.env.oauth.local
+screenshots/auth/
+public/app/app.js
+# Playwright artifacts
+playwright-report/
+test-results/
+test-reports/
+public/certara-ui/
+allure-results/

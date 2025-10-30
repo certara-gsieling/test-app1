@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   root: '.',
+  // Disable publicDir to avoid overlap warning when outputting to public/app
+  publicDir: false,
   server: {
     port: 5173,
     strictPort: true,

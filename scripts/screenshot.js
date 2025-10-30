@@ -12,7 +12,9 @@ async function waitForServer(maxMs = 20000, intervalMs = 500) {
   while (Date.now() - start < maxMs) {
     try {
       const res = await fetch(url, { method: 'GET' })
-      if (res.ok || res.status === 404) return true
+      if (res.ok || res.status === 404) {
+        return true
+      }
     } catch {}
     await new Promise(r => setTimeout(r, intervalMs))
   }
@@ -37,7 +39,7 @@ await page.screenshot({ path: filePath, fullPage: true })
 // Also update a stable latest.png for easy viewing
 await page.screenshot({ path: path.join(outDir, 'latest.png'), fullPage: true })
 
-console.log(`Saved screenshot: ${filePath}`)
+process.stdout.write(`Saved screenshot: ${filePath}\n`)
 await browser.close()
 
 
