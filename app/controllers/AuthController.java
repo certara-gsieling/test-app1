@@ -165,10 +165,10 @@ public class AuthController extends Controller {
             // Try userinfo if available
             if (accessToken != null) {
                 try {
-                    ProviderMeta meta2 = discover(config.issuer);
-                    if (meta2.userInfoEndpoint != null && !meta2.userInfoEndpoint.isBlank()) {
+                    // Reuse meta from above instead of making a duplicate discovery request
+                    if (meta.userInfoEndpoint != null && !meta.userInfoEndpoint.isBlank()) {
                         HttpClient client2 = HttpClient.newHttpClient();
-                        HttpRequest reqInfo = HttpRequest.newBuilder(URI.create(meta2.userInfoEndpoint))
+                        HttpRequest reqInfo = HttpRequest.newBuilder(URI.create(meta.userInfoEndpoint))
                                 .timeout(Duration.ofSeconds(15))
                                 .header("Authorization", "Bearer " + accessToken)
                                 .GET().build();
